@@ -71,6 +71,7 @@ param resourceGroupLocation string = resourceGroup().location
   'uksouth'
   'westus'
   'westus3'
+  'westus2'
 ])
 @description('Location for all resources.')
 param location string = resourceGroupLocation
@@ -81,8 +82,8 @@ param tags object = {}
 @description('Name of the Azure AI Search account')
 param defaultAiSearchName string = 'agent-ai-search'
 
-@description('Name for capabilityHost.')
-param defaultCapabilityHostName string = 'caphost1'
+// @description('Name for capabilityHost.')
+// param defaultCapabilityHostName string = 'caphost1'
 
 @description('Name of the storage account')
 param defaultStorageName string = 'agentstorage'
@@ -315,20 +316,20 @@ module aiSearchRoleAssignments 'modules-network-secured/ai-search-role-assignmen
   }
 }
 
-module addCapabilityHost 'modules-network-secured/network-capability-host.bicep' = {
-  name: '${name}-${uniqueSuffix}--capability-host'
-  params: {
-    capabilityHostName: '${uniqueSuffix}-${defaultCapabilityHostName}'
-    aiHubName: aiHub.outputs.aiHubName
-    aiProjectName: aiProject.outputs.aiProjectName
-    acsConnectionName: aiHub.outputs.acsConnectionName
-    aoaiConnectionName: aiHub.outputs.aoaiConnectionName
-    customerSubnetId: vnet.outputs.agentsSubnetId
-  }
-  dependsOn: [
-    aiSearchRoleAssignments, aiServiceRoleAssignments
-  ]
-}
+// module addCapabilityHost 'modules-network-secured/network-capability-host.bicep' = {
+//   name: '${name}-${uniqueSuffix}--capability-host'
+//   params: {
+//     capabilityHostName: '${uniqueSuffix}-${defaultCapabilityHostName}'
+//     aiHubName: aiHub.outputs.aiHubName
+//     aiProjectName: aiProject.outputs.aiProjectName
+//     acsConnectionName: aiHub.outputs.acsConnectionName
+//     aoaiConnectionName: aiHub.outputs.aoaiConnectionName
+//     customerSubnetId: vnet.outputs.agentsSubnetId
+//   }
+//   dependsOn: [
+//     aiSearchRoleAssignments, aiServiceRoleAssignments
+//   ]
+// }
 
 var projectConnectionString =  aiProject.outputs.projectConnectionString
 var parts = split(projectConnectionString, ';')

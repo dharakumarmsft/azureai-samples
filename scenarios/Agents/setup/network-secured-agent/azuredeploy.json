@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.93.31351",
-      "templateHash": "14632217224620265892"
+      "templateHash": "4211097625456210427"
     }
   },
   "parameters": {
@@ -87,7 +87,8 @@
         "uaenorth",
         "uksouth",
         "westus",
-        "westus3"
+        "westus3",
+        "westus2"
       ],
       "metadata": {
         "description": "Location for all resources."
@@ -105,13 +106,6 @@
       "defaultValue": "agent-ai-search",
       "metadata": {
         "description": "Name of the Azure AI Search account"
-      }
-    },
-    "defaultCapabilityHostName": {
-      "type": "string",
-      "defaultValue": "caphost1",
-      "metadata": {
-        "description": "Name for capabilityHost."
       }
     },
     "defaultStorageName": {
@@ -2129,127 +2123,6 @@
         "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--dependencies', parameters('name'), parameters('uniqueSuffix')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--project', parameters('name'), parameters('uniqueSuffix')))]",
         "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--identity', parameters('name'), parameters('uniqueSuffix')))]"
-      ]
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2022-09-01",
-      "name": "[format('{0}-{1}--capability-host', parameters('name'), parameters('uniqueSuffix'))]",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "capabilityHostName": {
-            "value": "[format('{0}-{1}', parameters('uniqueSuffix'), parameters('defaultCapabilityHostName'))]"
-          },
-          "aiHubName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-{1}--hub', parameters('name'), parameters('uniqueSuffix'))), '2022-09-01').outputs.aiHubName.value]"
-          },
-          "aiProjectName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-{1}--project', parameters('name'), parameters('uniqueSuffix'))), '2022-09-01').outputs.aiProjectName.value]"
-          },
-          "acsConnectionName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-{1}--hub', parameters('name'), parameters('uniqueSuffix'))), '2022-09-01').outputs.acsConnectionName.value]"
-          },
-          "aoaiConnectionName": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-{1}--hub', parameters('name'), parameters('uniqueSuffix'))), '2022-09-01').outputs.aoaiConnectionName.value]"
-          },
-          "customerSubnetId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', format('{0}-{1}--vnet', parameters('name'), parameters('uniqueSuffix'))), '2022-09-01').outputs.agentsSubnetId.value]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.33.93.31351",
-              "templateHash": "6620421783569115101"
-            }
-          },
-          "parameters": {
-            "aiHubName": {
-              "type": "string",
-              "metadata": {
-                "description": "AI hub name"
-              }
-            },
-            "aiProjectName": {
-              "type": "string",
-              "metadata": {
-                "description": "AI project name"
-              }
-            },
-            "acsConnectionName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name for ACS connection."
-              }
-            },
-            "aoaiConnectionName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name for ACS connection."
-              }
-            },
-            "capabilityHostName": {
-              "type": "string",
-              "metadata": {
-                "description": "Name for capabilityHost."
-              }
-            },
-            "customerSubnetId": {
-              "type": "string",
-              "defaultValue": "",
-              "metadata": {
-                "description": "Name for customer subnet id"
-              }
-            }
-          },
-          "variables": {
-            "storageConnections": [
-              "[format('{0}/workspaceblobstore', parameters('aiProjectName'))]"
-            ],
-            "aiSearchConnection": [
-              "[format('{0}', parameters('acsConnectionName'))]"
-            ],
-            "aiServiceConnections": [
-              "[format('{0}', parameters('aoaiConnectionName'))]"
-            ]
-          },
-          "resources": [
-            {
-              "type": "Microsoft.MachineLearningServices/workspaces/capabilityHosts",
-              "apiVersion": "2024-10-01-preview",
-              "name": "[format('{0}/{1}', parameters('aiHubName'), format('{0}-{1}', parameters('aiHubName'), parameters('capabilityHostName')))]",
-              "properties": "[if(empty(parameters('customerSubnetId')), createObject('capabilityHostKind', 'Agents'), createObject('capabilityHostKind', 'Agents', 'customerSubnet', parameters('customerSubnetId')))]"
-            },
-            {
-              "type": "Microsoft.MachineLearningServices/workspaces/capabilityHosts",
-              "apiVersion": "2024-10-01-preview",
-              "name": "[format('{0}/{1}', parameters('aiProjectName'), format('{0}-{1}', parameters('aiProjectName'), parameters('capabilityHostName')))]",
-              "properties": {
-                "capabilityHostKind": "Agents",
-                "aiServicesConnections": "[variables('aiServiceConnections')]",
-                "vectorStoreConnections": "[variables('aiSearchConnection')]",
-                "storageConnections": "[variables('storageConnections')]"
-              },
-              "dependsOn": [
-                "[resourceId('Microsoft.MachineLearningServices/workspaces/capabilityHosts', parameters('aiHubName'), format('{0}-{1}', parameters('aiHubName'), parameters('capabilityHostName')))]"
-              ]
-            }
-          ]
-        }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--hub', parameters('name'), parameters('uniqueSuffix')))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--project', parameters('name'), parameters('uniqueSuffix')))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--AiSearch-RA', parameters('name'), parameters('uniqueSuffix')))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--AiServices-RA', parameters('name'), parameters('uniqueSuffix')))]",
-        "[resourceId('Microsoft.Resources/deployments', format('{0}-{1}--vnet', parameters('name'), parameters('uniqueSuffix')))]"
       ]
     }
   ],
