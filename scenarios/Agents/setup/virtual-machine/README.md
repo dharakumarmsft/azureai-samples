@@ -23,10 +23,8 @@ The resources in this directory help you set up and configure virtual machines o
     cd azureai-samples/scenarios/Agents/setup/virtual-machine
     ```
 
-2. Run the setup script:
-    ```bash
-    ./setup.sh
-    ```
+## Deploy
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazureai-samples%2Fmain%2Fscenarios%2FAgents%2Fsetup%2Fvirtual-machine%2Fazuredeploy.json)
 
 ### Configuration Options
 
@@ -37,10 +35,8 @@ The setup can be customized by modifying the following parameters in the script 
 - `VM_NAME`: Name of the virtual machine (default: ai-agent-vm)
 - `RESOURCE_GROUP`: Resource group name (default: ai-agent-resources)
 
-## Deploy
 
-## Deploy
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure-Samples%2Fazureai-samples%2Fmain%2Fscenarios%2FAgents%2Fsetup%2Fvirtual-machine%2Fazuredeploy.json)
+
 ## Features
 
 - Automated VM provisioning with optimal settings for AI workloads

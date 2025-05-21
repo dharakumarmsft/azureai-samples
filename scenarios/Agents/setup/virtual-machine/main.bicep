@@ -21,6 +21,12 @@ param bastionName string = '${virtualNetworkName}-bastion'
 @description('User assigned identity for the VM.')
 param userAssignedIdentity string
 
+@description('Enable Azure Bastion for the VM.')
+@allowed([
+  'Disabled'
+  'Enabled'
+])
+param azureBastionEnabled string = 'Disabled'
 // Create a short, unique suffix, that will be unique to each resource group
 param uniqueSuffix string = substring(uniqueString(resourceGroup().id), 0, 4)
 
@@ -41,7 +47,7 @@ resource umiExisting 'Microsoft.ManagedIdentity/userAssignedIdentities@2025-01-3
 }
 
 // Create AzureBastionSubnet in the existing virtual network
-resource bastionSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = {
+resource bastionSubnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = if (azureBastionEnabled == 'Enabled') {
   parent: existingVirtualNetwork
   name: 'AzureBastionSubnet' // This specific name is required by Azure Bastion
   properties: {
@@ -71,7 +77,7 @@ resource bastionPublicIP 'Microsoft.Network/publicIPAddresses@2023-05-01' = {
 }
 
 // Create Azure Bastion with Standard SKU for enhanced features
-resource bastion 'Microsoft.Network/bastionHosts@2023-05-01' = {
+resource bastion 'Microsoft.Network/bastionHosts@2023-05-01' = if (azureBastionEnabled == 'Enabled') {
   name: '${bastionName}-${uniqueSuffix}'
   location: location
   sku: {

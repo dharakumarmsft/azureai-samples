@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.33.93.31351",
-      "templateHash": "7735979115864224877"
+      "templateHash": "14748576567537410595"
     }
   },
   "parameters": {
@@ -60,6 +60,17 @@
         "description": "User assigned identity for the VM."
       }
     },
+    "azureBastionEnabled": {
+      "type": "string",
+      "defaultValue": "Disabled",
+      "allowedValues": [
+        "Disabled",
+        "Enabled"
+      ],
+      "metadata": {
+        "description": "Enable Azure Bastion for the VM."
+      }
+    },
     "uniqueSuffix": {
       "type": "string",
       "defaultValue": "[substring(uniqueString(resourceGroup().id), 0, 4)]"
@@ -67,6 +78,7 @@
   },
   "resources": [
     {
+      "condition": "[equals(parameters('azureBastionEnabled'), 'Enabled')]",
       "type": "Microsoft.Network/virtualNetworks/subnets",
       "apiVersion": "2023-05-01",
       "name": "[format('{0}/{1}', parameters('virtualNetworkName'), 'AzureBastionSubnet')]",
@@ -100,6 +112,7 @@
       ]
     },
     {
+      "condition": "[equals(parameters('azureBastionEnabled'), 'Enabled')]",
       "type": "Microsoft.Network/bastionHosts",
       "apiVersion": "2023-05-01",
       "name": "[format('{0}-{1}', parameters('bastionName'), parameters('uniqueSuffix'))]",
